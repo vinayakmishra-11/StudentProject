@@ -1,6 +1,6 @@
 ## 🎓 StudentProject
 ## 📌 Project Overview
-## StudentProject is a Django-based multi-app project designed for seamless Docker deployment and automated CI/CD with Jenkins.
+## Build a Multi-App Django Project and Deploy with Docker
 ## 🚀 Getting Started
 ## 1️⃣ Clone the Repositor
 ``` 
