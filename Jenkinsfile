@@ -14,11 +14,11 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            steps {
-                script {
-                    sh 'docker build -t $IMAGE_NAME .'
-                }
-            }
+    steps {
+        bat 'docker build -t vinayakmishra11/studentproject .'
+    }
+}
+
         }
 
         stage('Push to Docker Hub') {
