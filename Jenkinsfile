@@ -14,17 +14,15 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-    steps {
-        bat 'docker build -t vinayakmishra11/studentproject .'
-    }
-}
-
+            steps {
+                bat "docker build -t %IMAGE_NAME% ."
+            }
         }
 
         stage('Push to Docker Hub') {
             steps {
                 withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    sh 'docker push $IMAGE_NAME'
+                    bat "docker push %IMAGE_NAME%"
                 }
             }
         }
@@ -32,9 +30,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh 'docker stop $CONTAINER_NAME || true'
-                    sh 'docker rm $CONTAINER_NAME || true'
-                    sh 'docker run -d -p 8000:8000 --name $CONTAINER_NAME $IMAGE_NAME'
+                    bat "docker stop %CONTAINER_NAME% || exit 0"
+                    bat "docker rm %CONTAINER_NAME% || exit 0"
+                    bat "docker run -d -p 8000:8000 --name %CONTAINER_NAME% %IMAGE_NAME%"
                 }
             }
         }
