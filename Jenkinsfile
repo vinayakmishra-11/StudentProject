@@ -19,13 +19,14 @@ pipeline {
             }
         }
 
-        stage('Push to Docker Hub') {
-            steps {
-                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    bat "docker push %IMAGE_NAME%"
-                }
-            }
+       stage('Push to Docker Hub') {
+    steps {
+        withDockerRegistry([credentialsId: '14d045a7-1f24-40d4-b0a9-55b7ebfaa355', url: 'https://index.docker.io/v1/']) {
+            bat "docker push %IMAGE_NAME%"
         }
+    }
+}
+
 
         stage('Deploy') {
             steps {
