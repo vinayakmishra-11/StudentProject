@@ -19,21 +19,26 @@ pipeline {
             }
         }
 
-       stage('Push to Docker Hub') {
-    steps {
-        withDockerRegistry([credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/']) {
-            bat "docker push %IMAGE_NAME%"
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    withDockerRegistry([credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/']) {
+                        bat "docker login -u vinayakmishra11 -p %DOCKER_PASSWORD%"
+                        bat "docker push %IMAGE_NAME%"
+                    }
+                }
+            }
         }
-    }
-}
-
 
         stage('Deploy') {
             steps {
                 script {
-                    bat "docker stop %CONTAINER_NAME% || exit 0"
-                    bat "docker rm %CONTAINER_NAME% || exit 0"
-                    bat "docker run -d -p 8000:8000 --name %CONTAINER_NAME% %IMAGE_NAME%"
+                    // Ensure old container is stopped & removed safely
+                    bat "docker stop ${CONTAINER_NAME} || echo 'No existing container to stop'"
+                    bat "docker rm ${CONTAINER_NAME} || echo 'No existing container to remove'"
+
+                    // Run the new container
+                    bat "docker run -d -p 8000:8000 --name ${CONTAINER_NAME} ${IMAGE_NAME}"
                 }
             }
         }
