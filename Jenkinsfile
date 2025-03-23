@@ -9,13 +9,15 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/vinayakmishra-11/StudentProject.git'
+                git branch: 'main', url: 'https://github.com/vinayakmishra-11/StudentProject.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                script {
+                    sh 'docker build -t $IMAGE_NAME .'
+                }
             }
         }
 
@@ -29,9 +31,11 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker stop $CONTAINER_NAME || true'
-                sh 'docker rm $CONTAINER_NAME || true'
-                sh 'docker run -d -p 8000:8000 --name $CONTAINER_NAME $IMAGE_NAME'
+                script {
+                    sh 'docker stop $CONTAINER_NAME || true'
+                    sh 'docker rm $CONTAINER_NAME || true'
+                    sh 'docker run -d -p 8000:8000 --name $CONTAINER_NAME $IMAGE_NAME'
+                }
             }
         }
     }
