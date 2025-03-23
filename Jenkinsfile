@@ -22,9 +22,11 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    withDockerRegistry([credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/']) {
-                        bat "docker login -u vinayakmishra11 -p %DOCKER_PASSWORD%"
-                        bat "docker push %IMAGE_NAME%"
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        bat """
+                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                        docker push %IMAGE_NAME%
+                        """
                     }
                 }
             }
@@ -34,11 +36,11 @@ pipeline {
             steps {
                 script {
                     // Ensure old container is stopped & removed safely
-                    bat "docker stop ${CONTAINER_NAME} || echo 'No existing container to stop'"
-                    bat "docker rm ${CONTAINER_NAME} || echo 'No existing container to remove'"
+                    bat "docker stop %CONTAINER_NAME% || echo No existing container to stop"
+                    bat "docker rm %CONTAINER_NAME% || echo No existing container to remove"
 
                     // Run the new container
-                    bat "docker run -d -p 8000:8000 --name ${CONTAINER_NAME} ${IMAGE_NAME}"
+                    bat "docker run -d -p 8000:8000 --name %CONTAINER_NAME% %IMAGE_NAME%"
                 }
             }
         }
